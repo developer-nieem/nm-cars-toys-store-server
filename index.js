@@ -37,6 +37,7 @@ async function run() {
       res.send(result);
     });
 
+    // toys information with sub-category
     app.get("/toys/:text", async (req, res) => {
       const text = req.params.text;
 
@@ -51,13 +52,24 @@ async function run() {
       }
     });
 
-
+// toys details with ID 
     app.get('/toysdetails/:id' , async(req , res) => {
         const id =  req.params.id;
         const filter =  {_id : new ObjectId(id)};
         const result =  await carToysCollection.findOne(filter);
         res.send(result)
     })
+
+// finding toys with email
+app.get('/mytoys/:email' , async(req, res) => {
+    const mail =  req.params.email;
+    // console.log(mail);
+    // const filter =  {sellerEmail : new ObjectId(mail)}
+    const result =  await carToysCollection.find({sellerEmail : mail}).toArray();
+    console.log(result);
+    res.send(result)
+
+})
 
 
     // Send a ping to confirm a successful connection
