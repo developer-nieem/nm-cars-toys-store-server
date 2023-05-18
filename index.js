@@ -34,7 +34,21 @@ async function run() {
         return res.status(404).send({ message: "error" });
       }
       const result = await carToysCollection.insertOne(data);
-      res.send(result)
+      res.send(result);
+    });
+
+    app.get("/toys/:text", async (req, res) => {
+      const text = req.params.text;
+
+      if (text == "sportsCar" || text == "truck" || text == "regularCar") {
+        const result = await carToysCollection
+          .find({ subCategory: text })
+          .toArray();
+        return res.send(result);
+      } else {
+        const result = await carToysCollection.find().toArray();
+        res.send(result);
+      }
     });
 
     // Send a ping to confirm a successful connection
