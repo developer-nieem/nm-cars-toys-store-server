@@ -52,55 +52,56 @@ async function run() {
       }
     });
 
-// toys details with ID 
-    app.get('/toysdetails/:id' , async(req , res) => {
-        const id =  req.params.id;
-        const filter =  {_id : new ObjectId(id)};
-        const result =  await carToysCollection.findOne(filter);
-        res.send(result)
-    })
+    // toys details with ID
+    app.get("/toysdetails/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const result = await carToysCollection.findOne(filter);
+      res.send(result);
+    });
 
-// finding toys with email
-app.get('/mytoys/:email' , async(req, res) => {
-    const mail =  req.params.email;
-    // console.log(mail);
-    // const filter =  {sellerEmail : new ObjectId(mail)}
-    const result =  await carToysCollection.find({sellerEmail : mail}).toArray();
-    console.log(result);
-    res.send(result)
+    // finding toys with email
+    app.get("/mytoys/:email", async (req, res) => {
+      const mail = req.params.email;
+      // console.log(mail);
+      // const filter =  {sellerEmail : new ObjectId(mail)}
+      const result = await carToysCollection
+        .find({ sellerEmail: mail })
+        .toArray();
+      
+      res.send(result);
+    });
 
-})
+    // toys find with ID  for update toys
+    app.get("/updatedetails/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const result = await carToysCollection.findOne(filter);
+      res.send(result);
+    });
 
 
-// toys find with ID  for update toys
-app.get('/updatedetails/:id' , async(req , res) => {
-    const id =  req.params.id;
-    const filter =  {_id : new ObjectId(id)};
-    const result =  await carToysCollection.findOne(filter);
-    res.send(result)
-})
-
-// app.put('/updatetoys/:id' , async(req,  res) =>{
-//     const id =  req.params.id;
-//     console.log(id);
-//     const body =  req.body;
-//     const filter = { _id : new ObjectId(id)};
-//     const updateDoc = {
-//         $set : {
-//             toysName : body.toysName,
-//             sellerName : body.sellerName,
-//             sellerEmail : body.sellerEmail,
-//             photo : body.photo,
-//             quantity : body.quantity,
-//             rating : body.rating,
-//             details : body.details,
-//             price : body.price,
-            
-//         }
-//     }
-//     const result =  await carToysCollection.updateOne(filter , updateDoc);
-//     res.send(result)
-// })
+    // updated toys 
+    app.put("/updatetoys/:id", async (req, res) => {
+      const id = req.params.id;
+      
+      const body = req.body;
+      const filter = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          toysName: body.toysName,
+          sellerName: body.sellerName,
+          sellerEmail: body.sellerEmail,
+          photo: body.photo,
+          quantity: body.quantity,
+          rating: body.rating,
+          details: body.details,
+          price: body.price,
+        },
+      };
+      const result = await carToysCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
