@@ -27,27 +27,26 @@ async function run() {
 
     const carToysCollection = client.db("carToysDB").collection("carToys");
 
-    const indexKey =  {toysName : 1};
-    const indexOption =  {name : 'toyName'};
-    const result =  await carToysCollection.createIndex(indexKey, indexOption);
+    const indexKey = { toysName: 1 };
+    const indexOption = { name: "toyName" };
+    const result = await carToysCollection.createIndex(indexKey, indexOption);
 
     // search by toys
 
-    app.get('/toyssearch/:text' , async(req, res) =>{
-        const text = req.params.text;
-        // console.log(text);
-        const result =  await carToysCollection.find({
-            $or : [
-                {toysName : {$regex: text , $options: 'i'}}
-            ]
-        }).toArray()
+    app.get("/toyssearch/:text", async (req, res) => {
+      const text = req.params.text;
+      // console.log(text);
+      const result = await carToysCollection
+        .find({
+          $or: [{ toysName: { $regex: text, $options: "i" } }],
+        })
+        .toArray();
 
-        // console.log(result);
-        res.send(result)
-    })
+      // console.log(result);
+      res.send(result);
+    });
 
-
-    // post car toys 
+    // post car toys
     app.post("/add-toys", async (req, res) => {
       const data = req.body;
       data.createTime = new Date();
@@ -57,7 +56,6 @@ async function run() {
       const result = await carToysCollection.insertOne(data);
       res.send(result);
     });
-
 
     // toys information with sub-category
     app.get("/toys/:text", async (req, res) => {
@@ -90,9 +88,36 @@ async function run() {
       const result = await carToysCollection
         .find({ sellerEmail: mail })
         .toArray();
-      
+
       res.send(result);
     });
+
+
+    // Sort in ascending order based on price
+    app.get("/ascendingmytoys/:email", async (req, res) => {
+      const mail = req.params.email;
+      const result = await carToysCollection
+        .find({ sellerEmail: mail })
+        .collation({ locale: "en_US", numericOrdering: true })
+        .sort({ price: 1 })
+        .toArray();
+      res.send(result);
+    });
+
+
+    // Sort in descending order based on price
+    app.get("/descendingmytoys/:email", async (req, res) => {
+      const mail = req.params.email;
+
+      const result = await carToysCollection
+        .find({ sellerEmail: mail })
+        .collation({ locale: "en_US", numericOrdering: true })
+        .sort({ price: -1 })
+        .toArray();
+        
+      res.send(result);
+    });
+
 
     // toys find with ID  for update toys
     app.get("/updatedetails/:id", async (req, res) => {
@@ -102,11 +127,10 @@ async function run() {
       res.send(result);
     });
 
-
-    // updated toys 
+    // updated toys
     app.put("/updatetoys/:id", async (req, res) => {
       const id = req.params.id;
-      
+
       const body = req.body;
       const filter = { _id: new ObjectId(id) };
       const updateDoc = {
@@ -125,14 +149,13 @@ async function run() {
       res.send(result);
     });
 
-
-    // Delete toys 
-    app.delete('/deletetoy/:id' , async(req,res) =>{
-        const id =  req.params.id;
-        const filter =  {_id : new ObjectId(id)};
-        const result =  await carToysCollection.deleteOne(filter);
-        res.send(result)
-    })
+    // Delete toys
+    app.delete("/deletetoy/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const result = await carToysCollection.deleteOne(filter);
+      res.send(result);
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
