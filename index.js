@@ -60,14 +60,14 @@ async function run() {
     // toys information with sub-category
     app.get("/toys/:text", async (req, res) => {
       const text = req.params.text;
-
+        const limit = 20;
       if (text == "sportsCar" || text == "truck" || text == "regularCar") {
         const result = await carToysCollection
-          .find({ subCategory: text })
+          .find({ subCategory: text }).limit(limit)
           .toArray();
         return res.send(result);
       } else {
-        const result = await carToysCollection.find().toArray();
+        const result = await carToysCollection.find().limit(limit).toArray();
         res.send(result);
       }
     });
